@@ -57,14 +57,10 @@ object Main {
   def countChange(money: Int, coins: List[Int]): Int = {
     if (money == 0) {
       1
-    } else if (money < 0) {
+    } else if (money < 0 || coins.isEmpty) {
       0
     } else {
-      var sum = 0
-      for (c <- coins) {
-        sum += countChange(money - c, coins)
-      }
-      sum
+      countChange(money, coins.tail) + countChange(money - coins.head, coins)
     }
   }
 }
