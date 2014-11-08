@@ -139,4 +139,15 @@ class FunSetSuite extends FunSuite {
       assert(!contains(f2, 1), "filter < 0")
     }
   }
+
+  test ("for all") {
+    new TestSets {
+      val p = union(singletonSet(1), singletonSet(2))
+      val n = union(singletonSet(-1), singletonSet(-2))
+      assert(forall(p, (x: Int) => x > 0))
+      assert(!forall(p, (x: Int) => x < 0))
+      assert(forall(n, (x: Int) => x < 0))
+      assert(!forall(n, (x: Int) => x > 0))
+    }
+  }
 }
