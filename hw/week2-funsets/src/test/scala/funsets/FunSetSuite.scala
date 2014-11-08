@@ -150,4 +150,29 @@ class FunSetSuite extends FunSuite {
       assert(!forall(n, (x: Int) => x > 0))
     }
   }
+
+  test ("exists") {
+    new TestSets {
+      val p = union(singletonSet(1), singletonSet(2))
+      val n = union(singletonSet(-1), singletonSet(-2))
+      val m = union(singletonSet(1), singletonSet(-1))
+      assert(exists(p, (x: Int) => x > 0))
+      assert(!exists(p, (x: Int) => x < 0))
+      assert(exists(n, (x: Int) => x < 0))
+      assert(!exists(n, (x: Int) => x > 0))
+      assert(exists(m, (x: Int) => x > 0))
+      assert(exists(m, (x: Int) => x < 0))
+    }
+  }
+
+  test ("map") {
+    new TestSets {
+      val t = union(singletonSet(1), singletonSet(2))
+      val actual = map(t, (x: Int) => x * 2)
+      assert(!contains(actual, 1), "maps to 1")
+      assert(contains(actual, 2), "maps to 2")
+      assert(!contains(actual, 3), "maps to 3")
+      assert(contains(actual, 4), "maps to 4")
+    }
+  }
 }
