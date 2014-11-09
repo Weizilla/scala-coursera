@@ -175,4 +175,12 @@ class FunSetSuite extends FunSuite {
       assert(contains(actual, 4), "maps to 4")
     }
   }
+
+  test ("map 2") {
+    val t = union(singletonSet(1), singletonSet(3))
+    val actual = map(t, (x: Int) => x - 1)
+    assert(!contains(actual, -1), "maps to -1")
+    assert(contains(actual, 0), "maps to 0")
+    assert(contains(actual, 2), "maps to 2")
+  }
 }
