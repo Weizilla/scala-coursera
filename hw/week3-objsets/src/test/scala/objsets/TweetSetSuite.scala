@@ -62,6 +62,17 @@ class TweetSetSuite extends FunSuite {
     }
   }
 
+  test("most tweets") {
+    val a = new Tweet("a", "a body", 1)
+    val b = new Tweet("b", "b body", 10)
+    val c = new Tweet("c", "c body", 5)
+    val d = new Tweet("d", "d body", 2)
+    val s = new Empty().incl(a).incl(b).incl(c).incl(d)
+    assert(size(s) == 4)
+    val most = s.mostRetweeted
+    assert(most.user == "b")
+  }
+
   test("descending: set5") {
     new TestSets {
       val trends = set5.descendingByRetweet
