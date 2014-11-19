@@ -30,8 +30,29 @@ class HuffmanSuite extends FunSuite {
     assert(string2Chars("hello, world") === List('h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'))
   }
 
+  test("times(this is an example of a huffman tree)") {
+    val input = string2Chars("this is an example of a huffman tree")
+    val expected = Map(' ' -> 7, 'a' -> 4, 'e' -> 4, 'f' -> 3, 'h' -> 2, 'i' -> 2, 'm' -> 2, 'n' -> 2,
+      's' -> 2, 't' -> 2, 'l' -> 1, 'o' -> 1, 'p' -> 1, 'r' -> 1, 'u' -> 1, 'x' -> 1)
+
+    val actual = times(input)
+    assert(actual.size == expected.size)
+    for ((key, freq) <- actual) {
+      assert(expected(key) == freq)
+    }
+  }
+
   test("makeOrderedLeafList for some frequency table") {
     assert(makeOrderedLeafList(List(('t', 2), ('e', 1), ('x', 3))) === List(Leaf('e',1), Leaf('t',2), Leaf('x',3)))
+  }
+
+  test("singleton") {
+    new TestTrees {
+      assert(singleton(List(t1)))
+      assert(singleton(List(t2)))
+      assert(singleton(List(makeCodeTree(t1, t2))))
+      assert(!singleton(List(t1, t2)))
+    }
   }
 
   test("combine of some leaf list") {
