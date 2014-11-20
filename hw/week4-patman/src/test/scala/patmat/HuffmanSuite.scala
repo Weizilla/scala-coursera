@@ -60,6 +60,31 @@ class HuffmanSuite extends FunSuite {
     assert(combine(leaflist) === List(Fork(Leaf('e',1),Leaf('t',2),List('e', 't'),3), Leaf('x',4)))
   }
 
+  test("combine of some leaf list 1") {
+    val leaflist = List(Leaf('e', 2), Leaf('t', 2), Leaf('x', 5), Leaf('z', 2))
+    assert(combine(leaflist) === List(Leaf('z', 2), Fork(Leaf('e', 2), Leaf('t', 2), List('e', 't'), 4), Leaf('x', 5)))
+  }
+
+  test("test union") {
+    val leaflist = List(Leaf('e', 2), Leaf('t', 2), Leaf('x', 5), Leaf('z', 2))
+    assert(until(singleton, combine)(leaflist) == List(Fork(
+      Leaf('x', 5),
+      Fork(Leaf('z', 2), Fork(Leaf('e', 2), Leaf('t', 2), List('e', 't'), 4), List('z', 'e', 't'), 6),
+      List('x', 'z', 'e', 't'),
+      11)
+    ))
+  }
+
+  test("test create code tree") {
+    val input = "tetxzxexxxz"
+    assert(createCodeTree(string2Chars(input)) === Fork(
+      Leaf('x', 5),
+      Fork(Leaf('z', 2), Fork(Leaf('t', 2), Leaf('e', 2), List('t', 'e'), 4), List('z', 't', 'e'), 6),
+      List('x', 'z', 't', 'e'),
+      11)
+    )
+  }
+
   test("decode and encode a very short text should be identity") {
     new TestTrees {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)
