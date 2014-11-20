@@ -55,6 +55,15 @@ class HuffmanSuite extends FunSuite {
     }
   }
 
+  test("combine singleton") {
+    val singleton = List(Leaf('e', 1))
+    assert(combine(singleton) === singleton)
+  }
+
+  test("combine of nil") {
+    assert(combine(List()) === List())
+  }
+
   test("combine of some leaf list") {
     val leaflist = List(Leaf('e', 1), Leaf('t', 2), Leaf('x', 4))
     assert(combine(leaflist) === List(Fork(Leaf('e',1),Leaf('t',2),List('e', 't'),3), Leaf('x',4)))
@@ -85,20 +94,63 @@ class HuffmanSuite extends FunSuite {
     )
   }
 
-  test("decoding") {
-    val tree = Fork( Leaf('x', 5), Fork(Leaf('z', 2), Fork(Leaf('t', 2), Leaf('e', 2), List('t', 'e'), 4), List('z', 't', 'e'), 6), List('x', 'z', 't', 'e'), 11)
+  test("decoding single") {
+    new CodeTest {
+      assert(decode(tree, x) === "x".toList)
+      assert(decode(tree, z) === "z".toList)
+      assert(decode(tree, t) === "t".toList)
+      assert(decode(tree, e) === "e".toList)
+    }
+  }
+  test ("decoding multiple") {
+    new CodeTest {
+      assert(decode(tree, z ::: e) === "ze".toList)
+      assert(decode(tree, x ::: t) === "xt".toList)
+      assert(decode(tree, z ::: e ::: x) === "zex".toList)
+      assert(decode(tree, z ::: e ::: t ::: x) === "zetx".toList)
+    }
+  }
+
+  test("encoding single") {
+    new CodeTest {
+      assert(encode(tree)("x".toList) === x)
+      assert(encode(tree)("z".toList) === z)
+      assert(encode(tree)("t".toList) === t)
+      assert(encode(tree)("e".toList) === e)
+    }
+  }
+  test("encode multiple") {
+    new CodeTest {
+      assert(encode(tree)("ze".toList) === z ::: e)
+      assert(encode(tree)("xt".toList) === x ::: t)
+      assert(encode(tree)("zex".toList) === z ::: e ::: x)
+      assert(encode(tree)("zetx".toList) === z ::: e ::: t ::: x)
+    }
+  }
+
+  test("quick encoding single") {
+    new CodeTest {
+      assert(quickEncode(tree)("x".toList) === x)
+      assert(quickEncode(tree)("z".toList) === z)
+      assert(quickEncode(tree)("t".toList) === t)
+      assert(quickEncode(tree)("e".toList) === e)
+    }
+  }
+  test("quick encode multiple") {
+    new CodeTest {
+      assert(quickEncode(tree)("ze".toList) === z ::: e)
+      assert(quickEncode(tree)("xt".toList) === x ::: t)
+      assert(quickEncode(tree)("zex".toList) === z ::: e ::: x)
+      assert(quickEncode(tree)("zetx".toList) === z ::: e ::: t ::: x)
+    }
+  }
+
+  trait CodeTest {
+    val tree = Fork(Leaf('x', 5), Fork(Leaf('z', 2), Fork(Leaf('t', 2), Leaf('e', 2), List('t', 'e'), 4), List('z', 't', 'e'), 6), List('x', 'z', 't', 'e'), 11)
     val x: List[Int] = List(0)
     val z: List[Int] = List(1, 0)
     val t: List[Int] = List(1, 1, 0)
     val e: List[Int] = List(1, 1, 1)
-    assert(decode(tree, x) === "x".toList)
-    assert(decode(tree, z) === "z".toList)
-    assert(decode(tree, t) === "t".toList)
-    assert(decode(tree, e) === "e".toList)
-    assert(decode(tree, z ::: e) === "ze".toList)
-    assert(decode(tree, x ::: t) === "xt".toList)
-    assert(decode(tree, z ::: e ::: x) === "zex".toList)
-    assert(decode(tree, z ::: e ::: t ::: x) === "zetx".toList)
   }
 
   test("decode and encode a very short text should be identity") {
