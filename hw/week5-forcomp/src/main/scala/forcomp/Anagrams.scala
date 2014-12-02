@@ -32,16 +32,18 @@ object Anagrams {
    *  same character, and are represented as a lowercase character in the occurrence list.
    */
   def wordOccurrences(w: Word): Occurrences = {
-    val result = w.toLowerCase groupBy(c => c) map { case (c, s) => {
-      c -> s.size
-    }
-    }
+    val result = w.toLowerCase groupBy(c => c) map { case (c, s) => c -> s.size }
     result.toList.sortBy(_._1)
   }
 
   /** Converts a sentence into its character occurrence list. */
   def sentenceOccurrences(s: Sentence): Occurrences = {
-    s.flatMap(wordOccurrences)
+    def addOccur(acc: List[(Char, Int)], o: (Char, Int)): List[(Char, Int)] = {
+      val (c, i) = o
+      val m = acc.toMap withDefaultValue 0
+      (m + (c -> (m(c) + i))).toList
+    }
+    s.flatMap(wordOccurrences).foldLeft(List.empty[(Char, Int)])(addOccur).sortBy(_._1)
   }
 
   /** The `dictionaryByOccurrences` is a `Map` from different occurrences to a sequence of all
@@ -127,12 +129,12 @@ object Anagrams {
    *  and has no zero-entries.
    */
   def subtract(x: Occurrences, y: Occurrences): Occurrences = {
-    def addOccur(acc: Occurrences, n: (Char, Int)): Occurrences = {
+    def subtractOccur(acc: Occurrences, n: (Char, Int)): Occurrences = {
       val (c, i) = n
       val m = acc.toMap
       (m + (c -> (m(c) - i))).toList
     }
-    y.foldLeft(x)(addOccur).filter(_._2 > 0)
+    y.foldLeft(x)(subtractOccur).filter(_._2 > 0).sortBy(_._1)
   }
 
   /** Returns a list of all anagram sentences of the given sentence.
@@ -182,23 +184,21 @@ object Anagrams {
 
     val occur = sentenceOccurrences(sentence)
     def sentenceAnagram(occur: Occurrences, acc: Sentence): List[Sentence] = {
-      println(s"AA $occur    $acc")
-      Nil
-//      if (occur.isEmpty || ! dictionaryByOccurrences.contains(occur)) {
-//        return List(acc)
-//      }
-//
-//      val newOccurs = for {
-//        n <- 0 to occur.size
-//        occurSubet <- occur.splitAt(n)
-//        o <- combinations(occurSubet)
-//        word <- dictionaryByOccurrences.getOrElse(o, Nil)
-//        if word != Nil
-//      } yield {
-//        val occurNew = subtract(occur, o)
-//        sentenceAnagram(occurNew, acc :+ word)
-//      }
-//      newOccurs.flatten
+//      println(s"AA $occur  |  $acc")
+      if (occur.isEmpty) {
+        return List(acc)
+      }
+
+      val newOccurs = for {
+        o <- combinations(occur)
+        word <- dictionaryByOccurrences.getOrElse(o, List.empty[Word])
+        if word.nonEmpty
+//        word <- words
+      } yield {
+        val occurNew = subtract(occur, o)
+        sentenceAnagram(occurNew, acc :+ word)
+      }
+      newOccurs.flatten
     }
 
     sentenceAnagram(occur, List())

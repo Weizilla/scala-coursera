@@ -28,6 +28,15 @@ class AnagramsSuite extends FunSuite {
   }
 
 
+  test("sentenceOccurrences: aabccc") {
+    assert(sentenceOccurrences(List("aabccc")) === List(('a', 2), ('b', 1), ('c', 3)))
+  }
+
+  test("sentenceOccurrences: aabccc abcacc") {
+    assert(sentenceOccurrences(List("aabccc", "abcacc"))
+      === List(('a', 4), ('b', 2), ('c', 6)))
+  }
+
 
   test("dictionaryByOccurrences.get: eat") {
     assert(dictionaryByOccurrences.get(List(('a', 1), ('e', 1), ('t', 1))).map(_.toSet) === Some(Set("ate", "eat", "tea")))
@@ -140,7 +149,11 @@ class AnagramsSuite extends FunSuite {
       List("rulez", "Linux"),
       List("Linux", "rulez")
     )
-    assert(sentenceAnagrams(sentence).toSet === anas.toSet)
+    val actual = sentenceAnagrams(sentence).toSet
+    val expected = anas.toSet
+    println(s"Actual ${actual.size} Expected ${expected.size}")
+    assert(actual.size == expected.size)
+    assert(actual === expected)
   }
 
 }
