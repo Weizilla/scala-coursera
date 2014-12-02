@@ -58,6 +58,17 @@ class AnagramsSuite extends FunSuite {
     assert(combinations(Nil) === List(Nil))
   }
 
+  test("combination: aa") {
+    val aa = List(('a', 3))
+    val aacomb = List(
+      List(),
+      List(('a', 1)),
+      List(('a', 2)),
+      List(('a', 3))
+    )
+    assert(combinations(aa).toSet === aacomb.toSet)
+  }
+
   test("combinations: abba") {
     val abba = List(('a', 2), ('b', 2))
     val abbacomb = List(
@@ -78,14 +89,14 @@ class AnagramsSuite extends FunSuite {
     val abbac = List(('a', 2), ('b', 2), ('c', 1))
     val abbaccomb = List(
       List(),
-      List(('c', 1), ('a', 1)),
-      List(('c', 1), ('a', 2)),
-      List(('c', 1), ('b', 1)),
-      List(('c', 1), ('a', 1), ('b', 1)),
-      List(('c', 1), ('a', 2), ('b', 1)),
-      List(('c', 1), ('b', 2)),
-      List(('c', 1), ('a', 1), ('b', 2)),
-      List(('c', 1), ('a', 2), ('b', 2)),
+      List(('a', 1),('c', 1)),
+      List(('a', 2),('c', 1)),
+      List(('b', 1),('c', 1)),
+      List(('b', 2),('c', 1)),
+      List(('a', 1),('b', 1), ('c', 1)),
+      List(('a', 2),('b', 1), ('c', 1)),
+      List(('a', 1), ('b', 2), ('c', 1)),
+      List(('a', 2), ('b', 2), ('c', 1)),
       List(('a', 1)),
       List(('a', 2)),
       List(('b', 1)),

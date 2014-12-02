@@ -32,7 +32,10 @@ object Anagrams {
    *  same character, and are represented as a lowercase character in the occurrence list.
    */
   def wordOccurrences(w: Word): Occurrences = {
-    val result = w.toLowerCase groupBy(c => c) map {case (c, s) => c -> s.size}
+    val result = w.toLowerCase groupBy(c => c) map { case (c, s) => {
+      c -> s.size
+    }
+    }
     result.toList.sortBy(_._1)
   }
 
@@ -89,30 +92,27 @@ object Anagrams {
    */
   def combinations(occurrences: Occurrences): List[Occurrences] = {
 
-    def allForms(occur: (Char, Int)): List[(Char, Int)] = {
+    def allForms(occur: (Char, Int)): Occurrences = {
       val (c, i) = occur
-      (1 to i).map(iNum => (c, iNum)).toList
+      (0 to i).map(iNum => (c, iNum)).toList
     }
 
     def combo(occur: Occurrences, acc: Occurrences): List[Occurrences] = {
-      println(s"$occur $acc")
       if (occur.isEmpty) {
         return List(acc)
       }
 
-      val (c, i) = occur.head
-      for {
+      val combined = for {
         curr <- allForms(occur.head)
       } yield {
-//        println(curr)
-        combo(occur.tail, curr :: occur.tail)
-      }.flatten
+        combo(occur.tail, acc :+ curr)
+      }
+      combined.flatten
     }
 
-    val c = combo(occurrences, List())
-    println("F " + c)
-
-    Nil
+    val c = combo(occurrences, List()).map(l => l.filter(_._2 > 0))
+//    c.foreach(println)
+    c
   }
 
 
@@ -126,7 +126,14 @@ object Anagrams {
    *  Note: the resulting value is an occurrence - meaning it is sorted
    *  and has no zero-entries.
    */
-  def subtract(x: Occurrences, y: Occurrences): Occurrences = ???
+  def subtract(x: Occurrences, y: Occurrences): Occurrences = {
+    def addOccur(acc: Occurrences, n: (Char, Int)): Occurrences = {
+      val (c, i) = n
+      val m = acc.toMap
+      (m + (c -> (m(c) - i))).toList
+    }
+    y.foldLeft(x)(addOccur).filter(_._2 > 0)
+  }
 
   /** Returns a list of all anagram sentences of the given sentence.
    *
@@ -168,6 +175,33 @@ object Anagrams {
    *
    *  Note: There is only one anagram of an empty sentence.
    */
-  def sentenceAnagrams(sentence: Sentence): List[Sentence] = ???
+  def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
+    if (sentence.isEmpty) {
+      return List(List())
+    }
+
+    val occur = sentenceOccurrences(sentence)
+    def sentenceAnagram(occur: Occurrences, acc: Sentence): List[Sentence] = {
+      println(s"AA $occur    $acc")
+      Nil
+//      if (occur.isEmpty || ! dictionaryByOccurrences.contains(occur)) {
+//        return List(acc)
+//      }
+//
+//      val newOccurs = for {
+//        n <- 0 to occur.size
+//        occurSubet <- occur.splitAt(n)
+//        o <- combinations(occurSubet)
+//        word <- dictionaryByOccurrences.getOrElse(o, Nil)
+//        if word != Nil
+//      } yield {
+//        val occurNew = subtract(occur, o)
+//        sentenceAnagram(occurNew, acc :+ word)
+//      }
+//      newOccurs.flatten
+    }
+
+    sentenceAnagram(occur, List())
+  }
 
 }
