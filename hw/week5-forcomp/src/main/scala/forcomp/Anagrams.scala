@@ -32,7 +32,13 @@ object Anagrams {
    *  same character, and are represented as a lowercase character in the occurrence list.
    */
   def wordOccurrences(w: Word): Occurrences = {
-    val result = w.toLowerCase groupBy(c => c) map { case (c, s) => c -> s.size }
+    val result = w.toLowerCase groupBy(c => c) map { case (c, s) => {
+      {
+        {
+          c -> s.size
+        }
+      }
+    } }
     result.toList.sortBy(_._1)
   }
 
@@ -101,20 +107,12 @@ object Anagrams {
 
     def combo(occur: Occurrences, acc: Occurrences): List[Occurrences] = {
       if (occur.isEmpty) {
-        return List(acc)
+        List(acc)
+      } else {
+        allForms(occur.head).map(curr => combo(occur.tail, acc :+ curr)).flatten
       }
-
-      val combined = for {
-        curr <- allForms(occur.head)
-      } yield {
-        combo(occur.tail, acc :+ curr)
-      }
-      combined.flatten
     }
-
-    val c = combo(occurrences, List()).map(l => l.filter(_._2 > 0))
-//    c.foreach(println)
-    c
+    combo(occurrences, List()).map(l => l.filter(_._2 > 0))
   }
 
 
@@ -179,29 +177,23 @@ object Anagrams {
    */
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
     if (sentence.isEmpty) {
-      return List(List())
+      List(List())
+    } else {
+      sentenceAnagram(sentenceOccurrences(sentence), List())
     }
+  }
 
-    val occur = sentenceOccurrences(sentence)
-    def sentenceAnagram(occur: Occurrences, acc: Sentence): List[Sentence] = {
-//      println(s"AA $occur  |  $acc")
-      if (occur.isEmpty) {
-        return List(acc)
-      }
-
+  private def sentenceAnagram(occur: Occurrences, acc: Sentence): List[Sentence] = {
+    if (occur.isEmpty) {
+      List(acc)
+    } else {
       val newOccurs = for {
         o <- combinations(occur)
         word <- dictionaryByOccurrences.getOrElse(o, List.empty[Word])
         if word.nonEmpty
-//        word <- words
-      } yield {
-        val occurNew = subtract(occur, o)
-        sentenceAnagram(occurNew, acc :+ word)
-      }
+      } yield sentenceAnagram(subtract(occur, o), acc :+ word)
       newOccurs.flatten
     }
-
-    sentenceAnagram(occur, List())
   }
 
 }
