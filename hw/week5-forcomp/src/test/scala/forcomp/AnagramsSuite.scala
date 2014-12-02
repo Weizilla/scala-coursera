@@ -18,6 +18,9 @@ class AnagramsSuite extends FunSuite {
     assert(wordOccurrences("Robert") === List(('b', 1), ('e', 1), ('o', 1), ('r', 2), ('t', 1)))
   }
 
+  test("wordOccurrences: aabccc") {
+    assert(wordOccurrences("aabccc") === List(('a', 2), ('b', 1), ('c', 3)))
+  }
 
 
   test("sentenceOccurrences: abcd e") {
@@ -71,6 +74,30 @@ class AnagramsSuite extends FunSuite {
     assert(combinations(abba).toSet === abbacomb.toSet)
   }
 
+  test("combinations: abbac") {
+    val abbac = List(('a', 2), ('b', 2), ('c', 1))
+    val abbaccomb = List(
+      List(),
+      List(('c', 1), ('a', 1)),
+      List(('c', 1), ('a', 2)),
+      List(('c', 1), ('b', 1)),
+      List(('c', 1), ('a', 1), ('b', 1)),
+      List(('c', 1), ('a', 2), ('b', 1)),
+      List(('c', 1), ('b', 2)),
+      List(('c', 1), ('a', 1), ('b', 2)),
+      List(('c', 1), ('a', 2), ('b', 2)),
+      List(('a', 1)),
+      List(('a', 2)),
+      List(('b', 1)),
+      List(('a', 1), ('b', 1)),
+      List(('a', 2), ('b', 1)),
+      List(('b', 2)),
+      List(('a', 1), ('b', 2)),
+      List(('a', 2), ('b', 2)),
+      List(('c', 1))
+    )
+    assert(combinations(abbac).toSet === abbaccomb.toSet)
+  }
 
 
   test("sentence anagrams: []") {
@@ -103,6 +130,6 @@ class AnagramsSuite extends FunSuite {
       List("Linux", "rulez")
     )
     assert(sentenceAnagrams(sentence).toSet === anas.toSet)
-  }  
+  }
 
 }
