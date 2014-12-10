@@ -100,57 +100,65 @@ trait GameDef {
      * Returns a block where the `x` coordinates of `b1` and `b2` are
      * changed by `d1` and `d2`, respectively.
      */
-    def dx(d1: Int, d2: Int) = Block(b1.dRow(d1), b2.dRow(d2))
+    def dRow(d1: Int, d2: Int) = Block(b1.dRow(d1), b2.dRow(d2))
 
     /**
      * Returns a block where the `y` coordinates of `b1` and `b2` are
      * changed by `d1` and `d2`, respectively.
      */
-    def dy(d1: Int, d2: Int) = Block(b1.dCol(d1), b2.dCol(d2))
+    def dCol(d1: Int, d2: Int) = Block(b1.dCol(d1), b2.dCol(d2))
 
 
     /** The block obtained by moving left */
-    def left = if (isStanding)         dy(-2, -1)
-               else if (b1.row == b2.row)  dy(-1, -2)
-               else                    dy(-1, -1)
+    def left = if (isStanding)         dCol(-2, -1)
+               else if (b1.row == b2.row)  dCol(-1, -2)
+               else                    dCol(-1, -1)
 
     /** The block obtained by moving right */
-    def right = if (isStanding)        dy(1, 2)
-                else if (b1.row == b2.row) dy(2, 1)
-                else                   dy(1, 1)
+    def right = if (isStanding)        dCol(1, 2)
+                else if (b1.row == b2.row) dCol(2, 1)
+                else                   dCol(1, 1)
 
     /** The block obtained by moving up */
-    def up = if (isStanding)           dx(-2, -1)
-             else if (b1.row == b2.row)    dx(-1, -1)
-             else                      dx(-1, -2)
+    def up = if (isStanding)           dRow(-2, -1)
+             else if (b1.row == b2.row)    dRow(-1, -1)
+             else                      dRow(-1, -2)
 
     /** The block obtained by moving down */
-    def down = if (isStanding)         dx(1, 2)
-               else if (b1.row == b2.row)  dx(1, 1)
-               else                    dx(2, 1)
+    def down = if (isStanding)         dRow(1, 2)
+               else if (b1.row == b2.row)  dRow(1, 1)
+               else                    dRow(2, 1)
 
 
     /**
      * Returns the list of blocks that can be obtained by moving
      * the current block, together with the corresponding move.
      */
-    def neighbors: List[(Block, Move)] = ???
+    def neighbors: List[(Block, Move)] = {
+      List((right, Right), (left, Left), (up, Up), (down, Down))
+    }
 
     /**
      * Returns the list of positions reachable from the current block
      * which are inside the terrain.
      */
-    def legalNeighbors: List[(Block, Move)] = ???
+    def legalNeighbors: List[(Block, Move)] = {
+      neighbors.filter(_._1.isLegal)
+    }
 
     /**
      * Returns `true` if the block is standing.
      */
-    def isStanding: Boolean = ???
+    def isStanding: Boolean = {
+      b1 == b2
+    }
 
     /**
      * Returns `true` if the block is entirely inside the terrain.
      */
-    def isLegal: Boolean = ???
+    def isLegal: Boolean = {
+      terrain(b1) && terrain(b2)
+    }
 
   }
 }

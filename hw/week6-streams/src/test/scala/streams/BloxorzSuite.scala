@@ -1,11 +1,8 @@
 package streams
 
-import org.scalatest.FunSuite
-
 import org.junit.runner.RunWith
+import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-
-import Bloxorz._
 
 @RunWith(classOf[JUnitRunner])
 class BloxorzSuite extends FunSuite {
@@ -50,6 +47,56 @@ class BloxorzSuite extends FunSuite {
   test("findChar level 1") {
     new Level1 {
       assert(startPos == Pos(1,1))
+    }
+  }
+
+  test("neighbors") {
+    new Level1 {
+      val b = Block(Pos(0, 0), Pos(0, 0))
+      val actual = b.neighbors
+      val expected = List(
+        (Block(Pos(0, 1), Pos(0, 2)), Right),
+        (Block(Pos(0, -2), Pos(0, -1)), Left),
+        (Block(Pos(-2, 0), Pos(-1, 0)), Up),
+        (Block(Pos(1, 0), Pos(2, 0)), Down)
+      )
+      assert(actual == expected)
+    }
+  }
+
+  test("legal neighbors") {
+    new Level1 {
+      val b = Block(Pos(0, 0), Pos(0, 0))
+      val actual = b.legalNeighbors
+      val expected = List(
+        (Block(Pos(0, 1), Pos(0, 2)), Right),
+        (Block(Pos(1, 0), Pos(2, 0)), Down)
+      )
+      assert(actual == expected)
+    }
+  }
+
+  test("neighbors with history") {
+    new Level1 {
+      val actual = neighborsWithHistory(Block(Pos(1, 1), Pos(1, 1)), List(Left, Up)).toSet
+      val expected = Set(
+        (Block(Pos(1, 2), Pos(1, 3)), List(Right, Left, Up)),
+        (Block(Pos(2, 1), Pos(3, 1)), List(Down, Left, Up))
+      )
+      assert(actual == expected)
+    }
+  }
+
+  test("new neighbors") {
+    new Level1 {
+      val actual = newNeighborsOnly(
+        Set(
+          (Block(Pos(1, 2), Pos(1, 3)), List(Right, Left, Up)),
+          (Block(Pos(2, 1), Pos(3, 1)), List(Down, Left, Up))
+        ).toStream, Set(Block(Pos(1, 2), Pos(1, 3)), Block(Pos(1, 1), Pos(1, 1)))
+      )
+      val expected = Set( (Block(Pos(2, 1), Pos(3, 1)), List(Down, Left, Up)) ).toStream
+      assert(actual == expected)
     }
   }
 
