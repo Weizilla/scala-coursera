@@ -100,6 +100,13 @@ class BloxorzSuite extends FunSuite {
     }
   }
 
+  test("from") {
+    new Level1 {
+      private val start = Block(Pos(0, 0), Pos(0, 0))
+      val actual = from(List((start, List.empty)).toStream, Set(start)).take(3).toList
+    }
+  }
+
   test("optimal solution for level 1") {
     new Level1 {
       assert(solve(solution) == Block(goal, goal))
